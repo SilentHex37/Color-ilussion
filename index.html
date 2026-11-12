@@ -613,9 +613,11 @@
 
       function buildImageStates() {
         const source = processingContext.getImageData(0, 0, imageWidth, imageHeight);
-        originalPixels = new ImageData(new Uint8ClampedArray(source.data), imageWidth, imageHeight);
+        const originalData = new Uint8ClampedArray(source.data);
         const psychedelicData = new Uint8ClampedArray(source.data.length);
         const grayData = new Uint8ClampedArray(source.data.length);
+
+        const clamp = value => Math.max(0, Math.min(255, value));
 
         for (let y = 0; y < imageHeight; y++) {
           for (let x = 0; x < imageWidth; x++) {
@@ -625,20 +627,18 @@
             const b = source.data[i + 2];
             const alpha = source.data[i + 3];
 
-            // Derive luminance from the source and use it to create a vivid,
-            // spatially varied hue rotation while retaining the image's details.
             const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
             const [h, s, v] = rgbToHsv(r, g, b);
-            const wave = Math.sin((x / imageWidth) * Math.PI * 2.4 + (y / imageHeight) * Math.PI * 1.6);
-            const hueShift = (0.43 + 0.12 * wave + 0.09 * (luminance - 0.5) + 1) % 1;
-            const shiftedHue = (h + hueShift) % 1;
-            const vividSaturation = Math.min(1, Math.max(0.78, s * 2.15 + 0.2));
-            const contrastedValue = Math.min(1, Math.max(0, (v - 0.5) * 1.32 + 0.54));
-            const [pr, pg, pb] = hsvToRgb(shiftedHue, vividSaturation, contrastedValue);
+            const spatialWave = Math.sin((x / Math.max(1, imageWidth)) * Math.PI * 3 + (y / Math.max(1, imageHeight)) * Math.PI * 2);
 
-            psychedelicData[i] = pr;
-            psychedelicData[i + 1] = pg;
-            psychedelicData[i + 2] = pb;
+            const shiftedHue = (h + 0.42 + 0.18 * spatialWave + 0.15 * (luminance - 0.5) + 1) % 1;
+            const saturation = Math.min(1, 0.96 + s * 0.6 + Math.abs(spatialWave) * 0.2);
+            const value = Math.min(1, 0.22 + v * 1.1 + (1 - luminance) * 0.35);
+            const [pr, pg, pb] = hsvToRgb(shiftedHue, saturation, value);
+
+            psychedelicData[i] = clamp(pr);
+            psychedelicData[i + 1] = clamp(pg);
+            psychedelicData[i + 2] = clamp(pb);
             psychedelicData[i + 3] = alpha;
 
             const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -649,6 +649,7 @@
           }
         }
 
+        originalPixels = new ImageData(originalData, imageWidth, imageHeight);
         psychedelicPixels = new ImageData(psychedelicData, imageWidth, imageHeight);
         grayscalePixels = new ImageData(grayData, imageWidth, imageHeight);
 
@@ -707,7 +708,6 @@
             updateTimer();
             setControls();
 
-            // The complete workflow begins automatically after image processing.
             window.setTimeout(() => {
               if (thisLoad === loadToken && phase === "ready") startExposure();
             }, 250);
