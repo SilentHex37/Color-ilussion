@@ -1,70 +1,1010 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#05050a">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05050a" />
   <title>AFTERIMAGE — Optical Illusion Experiment</title>
   <style>
-    :root{color-scheme:dark;--bg:#05050a;--panel:#101019;--text:#f4f2ff;--muted:#9c9aae;--purple:#b445ff;--cyan:#31e7ff;--border:rgba(179,69,255,.22)}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 50% -20%,rgba(116,35,177,.18),transparent 55%),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,select{font:inherit}button{min-height:44px;padding:0 16px;color:var(--text);background:#191824;border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer;transition:.18s}button:hover:not(:disabled){transform:translateY(-1px);border-color:var(--cyan);box-shadow:0 0 18px rgba(49,231,255,.14)}button:disabled{opacity:.42;cursor:not-allowed}button:focus-visible,select:focus-visible,.drop-zone:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-    .app{width:min(1120px,100%);min-height:100vh;margin:auto;padding:24px clamp(16px,4vw,42px) 28px;display:flex;flex-direction:column;gap:20px}header,.brand{display:flex;align-items:center;gap:12px}header{justify-content:space-between}.brand-mark{width:38px;height:38px;display:grid;place-items:center;color:var(--cyan);border:1px solid rgba(49,231,255,.38);border-radius:12px;box-shadow:0 0 22px rgba(49,231,255,.12);font-size:19px}.brand-name{margin:0;font-size:14px;font-weight:800;letter-spacing:.22em}.brand-subtitle{margin:3px 0 0;color:var(--muted);font-size:10px;letter-spacing:.15em;text-transform:uppercase}.privacy{color:var(--muted);font-size:12px}.privacy:before{content:"";display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#66f0ab;box-shadow:0 0 10px #66f0ab}.intro{text-align:center}.intro h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px);letter-spacing:-.04em}.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}.panel{background:linear-gradient(145deg,rgba(20,19,31,.96),rgba(11,11,18,.96));border:1px solid var(--border);border-radius:20px;box-shadow:0 18px 60px rgba(0,0,0,.24)}
-    .drop-zone{position:relative;min-height:112px;display:flex;align-items:center;justify-content:center;gap:14px;padding:20px;border:1px dashed rgba(180,69,255,.5);border-radius:18px;background:rgba(180,69,255,.035);cursor:pointer}.drop-zone:hover,.drop-zone.dragging{background:rgba(180,69,255,.09);border-color:var(--cyan)}.upload-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;color:var(--cyan);background:rgba(49,231,255,.09);font-size:22px}.drop-copy strong,.drop-copy span{display:block}.drop-copy strong{font-size:14px}.drop-copy span{margin-top:5px;color:var(--muted);font-size:12px}#fileInput{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-    .stage-panel{padding:13px}.stage{height:clamp(300px,52vh,570px);min-height:260px;position:relative;overflow:hidden;display:grid;place-items:center;border-radius:14px;background:radial-gradient(ellipse at center,rgba(115,79,158,.09),transparent 65%),#08080d}.canvas-frame{position:relative;display:none;max-width:100%;max-height:100%;line-height:0}#displayCanvas{display:block;width:auto;height:auto;max-width:min(100%,1000px);max-height:min(52vh,570px);object-fit:contain;border-radius:4px}#fixationDot{display:none;position:absolute;top:50%;left:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:#f00;box-shadow:0 0 10px rgba(255,0,0,.55);pointer-events:none}.stage-placeholder{padding:24px;color:#777487;text-align:center}.stage-placeholder .symbol{margin-bottom:12px;color:rgba(180,69,255,.7);font-size:34px}.stage-placeholder p{margin:0;font-size:13px}.stage-message{position:absolute;left:50%;bottom:18px;z-index:2;max-width:calc(100% - 32px);padding:9px 14px;transform:translateX(-50%);color:#fff;background:rgba(5,5,10,.78);border:1px solid rgba(255,255,255,.12);border-radius:999px;font-size:13px;text-align:center;backdrop-filter:blur(8px)}.stage-message:empty{display:none}
-    .experiment-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 19px}.timer-block{min-width:150px}.timer-label{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}#timer{margin-top:4px;font-variant-numeric:tabular-nums;font-size:30px;font-weight:700;letter-spacing:-.04em}#phaseLabel{margin-top:2px;color:var(--muted);font-size:12px}.controls{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}.primary{color:#080710;background:linear-gradient(105deg,var(--purple),#dc68ff);border:0;font-weight:750;box-shadow:0 0 22px rgba(180,69,255,.22)}.cyan-button{border-color:rgba(49,231,255,.35);color:var(--cyan)}select{min-height:44px;padding:0 30px 0 12px;color:var(--text);background:#191824;border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer}.completion{position:absolute;inset:0;z-index:3;display:none;align-content:center;justify-items:center;gap:17px;padding:20px;text-align:center;background:rgba(5,5,10,.72);backdrop-filter:blur(10px)}.completion.visible{display:grid}.completion h2{margin:0;font-size:clamp(24px,5vw,38px);letter-spacing:.14em;text-shadow:0 0 24px rgba(49,231,255,.35)}.completion p{margin:-8px 0 0;color:#c3c0d0;font-size:13px}.completion-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.footnote{margin:-7px 0 0;color:#777487;font-size:11px;text-align:center}
-    @media(max-width:720px){.app{gap:15px;padding-top:16px}.privacy{font-size:0}.stage{height:min(48vh,460px)}#displayCanvas{max-height:min(48vh,460px)}.experiment-bar{align-items:flex-start;flex-direction:column}.timer-block{display:flex;width:100%;align-items:center;gap:12px}#timer{margin:0;font-size:25px}#phaseLabel{margin:0 auto 0 0}.controls{justify-content:flex-start;width:100%}.controls button,.controls select{flex:1 1 auto}}@media(max-width:430px){.drop-zone{min-height:100px;padding:14px;gap:10px}.brand-subtitle{font-size:9px}.stage-panel{padding:8px}.controls button,.controls select{min-height:42px;padding-left:10px;padding-right:10px}}:fullscreen .app{width:100%;padding:18px}:fullscreen .stage{height:calc(100vh - 260px)}:fullscreen #displayCanvas{max-height:calc(100vh - 280px)}
+    :root {
+      color-scheme: dark;
+      --bg: #05050a;
+      --panel: #101019;
+      --text: #f4f2ff;
+      --muted: #9c9aae;
+      --purple: #b445ff;
+      --cyan: #31e7ff;
+      --border: rgba(179, 69, 255, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -20%, rgba(180, 69, 255, 0.18), transparent 50%),
+        var(--bg);
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #191824;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: var(--cyan);
+      box-shadow: 0 0 18px rgba(49, 231, 255, 0.16);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      background: linear-gradient(105deg, var(--purple), #dc68ff);
+      color: #080710;
+      border: none;
+      font-weight: 800;
+      box-shadow: 0 0 24px rgba(180, 69, 255, 0.25);
+    }
+
+    .cyan-button {
+      border-color: rgba(49, 231, 255, 0.35);
+      color: var(--cyan);
+    }
+
+    .app {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 24px clamp(16px, 4vw, 42px) 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(49, 231, 255, 0.38);
+      border-radius: 12px;
+      color: var(--cyan);
+      font-size: 19px;
+      box-shadow: 0 0 20px rgba(49, 231, 255, 0.12);
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      font-weight: 800;
+    }
+
+    .brand-subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .privacy {
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .privacy::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #66f0ab;
+      box-shadow: 0 0 10px rgba(102, 240, 171, 0.9);
+    }
+
+    .intro {
+      text-align: center;
+    }
+
+    .intro h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: -0.04em;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .panel {
+      background: linear-gradient(145deg, rgba(20, 19, 31, 0.96), rgba(11, 11, 18, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+    }
+
+    .drop-zone {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 120px;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px dashed rgba(180, 69, 255, 0.56);
+      background: rgba(180, 69, 255, 0.035);
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .drop-zone:hover, .drop-zone.dragging {
+      background: rgba(180, 69, 255, 0.09);
+      border-color: var(--cyan);
+      box-shadow: inset 0 0 24px rgba(49, 231, 255, 0.04);
+    }
+
+    .upload-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(49, 231, 255, 0.09);
+      color: var(--cyan);
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .drop-copy strong, .drop-copy span {
+      display: block;
+    }
+
+    .drop-copy strong {
+      font-size: 14px;
+    }
+
+    .drop-copy span {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #fileInput {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stage-panel {
+      padding: 13px;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: clamp(300px, 52vh, 570px);
+      min-height: 260px;
+      border-radius: 14px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at center, rgba(115, 79, 158, 0.09), transparent 65%),
+        #08080d;
+    }
+
+    .canvas-frame {
+      position: relative;
+      display: none;
+      max-width: 100%;
+      max-height: 100%;
+      line-height: 0;
+    }
+
+    #displayCanvas {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: min(100%, 1000px);
+      max-height: min(52vh, 570px);
+      object-fit: contain;
+      border-radius: 4px;
+      background: #000;
+    }
+
+    #fixationDot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: -6px 0 0 -6px;
+      background: #ff0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+      pointer-events: none;
+      display: none;
+      z-index: 2;
+    }
+
+    .stage-placeholder {
+      padding: 24px;
+      color: #777487;
+      text-align: center;
+    }
+
+    .stage-placeholder .symbol {
+      margin-bottom: 12px;
+      font-size: 34px;
+      color: rgba(180, 69, 255, 0.7);
+    }
+
+    .stage-placeholder p {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .stage-message {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      z-index: 3;
+      max-width: calc(100% - 32px);
+      transform: translateX(-50%);
+      background: rgba(5, 5, 10, 0.78);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      color: white;
+      padding: 9px 14px;
+      font-size: 13px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .stage-message:empty {
+      display: none;
+    }
+
+    .experiment-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 17px 19px;
+    }
+
+    .timer-block {
+      min-width: 150px;
+    }
+
+    .timer-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    #timer {
+      margin-top: 4px;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #phaseLabel {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    select {
+      min-height: 44px;
+      padding: 0 30px 0 12px;
+      color: var(--text);
+      background: #191824;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .completion {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: none;
+      align-content: center;
+      justify-items: center;
+      gap: 18px;
+      padding: 20px;
+      text-align: center;
+      background: rgba(5, 5, 10, 0.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .completion.visible {
+      display: grid;
+    }
+
+    .completion h2 {
+      margin: 0;
+      font-size: clamp(24px, 5vw, 38px);
+      letter-spacing: 0.14em;
+      text-shadow: 0 0 24px rgba(49, 231, 255, 0.35);
+    }
+
+    .completion p {
+      margin: -8px 0 0;
+      color: #c3c0d0;
+      font-size: 13px;
+    }
+
+    .completion-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .footnote {
+      margin: -7px 0 0;
+      text-align: center;
+      color: #777487;
+      font-size: 11px;
+    }
+
+    @media (max-width: 720px) {
+      .privacy {
+        font-size: 0;
+      }
+
+      .privacy::before {
+        margin-right: 0;
+      }
+
+      .stage {
+        height: min(48vh, 460px);
+      }
+
+      #displayCanvas {
+        max-height: min(48vh, 460px);
+      }
+
+      .experiment-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .timer-block {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 12px;
+      }
+
+      #timer {
+        margin: 0;
+        font-size: 25px;
+      }
+
+      #phaseLabel {
+        margin: 0 auto 0 0;
+      }
+
+      .controls {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .controls button,
+      .controls select {
+        flex: 1 1 auto;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .drop-zone {
+        min-height: 100px;
+        padding: 14px;
+      }
+
+      .brand-subtitle {
+        font-size: 9px;
+      }
+
+      .controls button,
+      .controls select {
+        min-height: 42px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .stage-panel {
+        padding: 8px;
+      }
+    }
+
+    :fullscreen .app {
+      width: 100%;
+      padding: 18px;
+    }
+
+    :fullscreen .stage {
+      height: calc(100vh - 260px);
+    }
+
+    :fullscreen #displayCanvas {
+      max-height: calc(100vh - 280px);
+    }
   </style>
 </head>
 <body>
   <main class="app">
-    <header><div class="brand"><div class="brand-mark" aria-hidden="true">◉</div><div><p class="brand-name">AFTERIMAGE</p><p class="brand-subtitle">A visual perception experiment</p></div></div><div class="privacy">Processed locally · Your image stays on this device</div></header>
-    <section class="intro"><h1>See what stays behind.</h1><p>Focus on the center point. When the colors fade, keep looking at the same spot.</p></section>
-    <label class="drop-zone" id="dropZone" for="fileInput" tabindex="0"><span class="upload-icon" aria-hidden="true">↑</span><span class="drop-copy"><strong id="uploadTitle">Choose an image or drop it here</strong><span id="uploadHint">JPG, JPEG, PNG, or WEBP · processed only in your browser</span></span><input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"></label>
-    <section class="panel stage-panel" aria-label="Experiment image"><div class="stage"><div class="stage-placeholder" id="placeholder"><div class="symbol">✳</div><p>Your image will appear here</p></div><div class="canvas-frame" id="canvasFrame"><canvas id="displayCanvas" aria-label="Experiment image display"></canvas><span id="fixationDot" aria-hidden="true"></span></div><div class="stage-message" id="stageMessage" aria-live="polite"></div><div class="completion" id="completion"><h2>EXPERIMENT COMPLETE</h2><p>Take a moment before beginning again.</p><div class="completion-actions"><button class="primary" id="tryAgainButton" type="button">Try Again</button><button class="cyan-button" id="uploadNewButton" type="button">Upload New Image</button></div></div></div></section>
-    <section class="panel experiment-bar" aria-label="Experiment controls"><div class="timer-block"><div><div class="timer-label">Time remaining</div><div id="timer" aria-live="off">00:20</div></div><div id="phaseLabel">Upload an image to begin</div></div><div class="controls"><label for="durationSelect" class="timer-label">Exposure</label><select id="durationSelect" aria-label="Exposure duration"><option value="10">10 seconds</option><option value="15">15 seconds</option><option value="20" selected>20 seconds</option><option value="30">30 seconds</option><option value="45">45 seconds</option><option value="60">60 seconds</option></select><button class="primary" id="startButton" disabled>Start Experiment</button><button id="pauseButton" hidden>Pause</button><button id="resumeButton" hidden>Resume</button><button id="restartButton" disabled>Restart</button><button id="stopButton" disabled>Stop</button><button class="cyan-button" id="fullscreenButton">Fullscreen</button></div></section>
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">◉</div>
+        <div>
+          <p class="brand-name">AFTERIMAGE</p>
+          <p class="brand-subtitle">A visual perception experiment</p>
+        </div>
+      </div>
+      <div class="privacy">Processed locally · Your image stays on this device</div>
+    </header>
+
+    <section class="intro" aria-labelledby="pageTitle">
+      <h1 id="pageTitle">See what stays behind.</h1>
+      <p>Focus on the center point. When the colors fade, keep looking at the same spot.</p>
+    </section>
+
+    <label class="drop-zone" id="dropZone" for="fileInput" tabindex="0">
+      <span class="upload-icon" aria-hidden="true">↑</span>
+      <span class="drop-copy">
+        <strong id="uploadTitle">Choose an image or drop it here</strong>
+        <span id="uploadHint">JPG, JPEG, PNG, or WEBP · processed only in your browser</span>
+      </span>
+      <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" />
+    </label>
+
+    <section class="panel stage-panel" aria-label="Experiment image">
+      <div class="stage" id="stage">
+        <div class="stage-placeholder" id="placeholder">
+          <div class="symbol" aria-hidden="true">✳</div>
+          <p>Your image will appear here</p>
+        </div>
+
+        <div class="canvas-frame" id="canvasFrame">
+          <canvas id="displayCanvas" aria-label="Experiment image display"></canvas>
+          <span id="fixationDot" aria-hidden="true"></span>
+        </div>
+
+        <div class="stage-message" id="stageMessage" aria-live="polite"></div>
+
+        <div class="completion" id="completion">
+          <h2>EXPERIMENT COMPLETE</h2>
+          <p>Take a moment before beginning again.</p>
+          <div class="completion-actions">
+            <button class="primary" id="tryAgainButton" type="button">Try Again</button>
+            <button class="cyan-button" id="uploadNewButton" type="button">Upload New Image</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel experiment-bar" aria-label="Experiment controls">
+      <div class="timer-block">
+        <div>
+          <div class="timer-label">Time remaining</div>
+          <div id="timer" aria-live="off">00:20</div>
+        </div>
+        <div id="phaseLabel">Upload an image to begin</div>
+      </div>
+
+      <div class="controls">
+        <label for="durationSelect" class="timer-label" style="align-self:center;">Exposure</label>
+        <select id="durationSelect" aria-label="Exposure duration">
+          <option value="10">10 seconds</option>
+          <option value="15">15 seconds</option>
+          <option value="20" selected>20 seconds</option>
+          <option value="30">30 seconds</option>
+          <option value="45">45 seconds</option>
+          <option value="60">60 seconds</option>
+        </select>
+
+        <button class="primary" id="startButton" type="button" disabled>Start Experiment</button>
+        <button id="pauseButton" type="button" hidden>Pause</button>
+        <button id="resumeButton" type="button" hidden>Resume</button>
+        <button id="restartButton" type="button" disabled>Restart</button>
+        <button id="stopButton" type="button" disabled>Stop</button>
+        <button class="cyan-button" id="fullscreenButton" type="button">Fullscreen</button>
+      </div>
+    </section>
+
     <p class="footnote">Focus on the red dot and try not to move your eyes. Stop if you feel discomfort.</p>
   </main>
+
   <canvas id="processingCanvas" hidden></canvas>
+
   <script>
-    (()=>{"use strict";
-      const $=id=>document.getElementById(id),fileInput=$("fileInput"),dropZone=$("dropZone"),uploadTitle=$("uploadTitle"),uploadHint=$("uploadHint"),placeholder=$("placeholder"),canvasFrame=$("canvasFrame"),displayCanvas=$("displayCanvas"),displayContext=displayCanvas.getContext("2d",{alpha:false}),processingCanvas=$("processingCanvas"),processingContext=processingCanvas.getContext("2d",{willReadFrequently:true}),fixationDot=$("fixationDot"),stageMessage=$("stageMessage"),completion=$("completion"),timerDisplay=$("timer"),phaseLabel=$("phaseLabel"),durationSelect=$("durationSelect"),startButton=$("startButton"),pauseButton=$("pauseButton"),resumeButton=$("resumeButton"),restartButton=$("restartButton"),stopButton=$("stopButton"),fullscreenButton=$("fullscreenButton");
-      const MAX_EDGE=2400,AFTERIMAGE_SECONDS=10;let originalPixels=null,psychedelicPixels=null,grayscalePixels=null,imageWidth=0,imageHeight=0,phase="empty",remainingSeconds=20,deadline=0,intervalId=null,activeObjectUrl=null,loadToken=0;
-      const selectedDuration=()=>Number(durationSelect.value),formatTime=s=>`00:${String(Math.max(0,Math.ceil(s))).padStart(2,"0")}`;function updateTimer(){timerDisplay.textContent=formatTime(remainingSeconds)}
-      function setControls(){const hasImage=!!originalPixels,running=phase==="running-exposure"||phase==="running-afterimage",paused=phase==="paused-exposure"||phase==="paused-afterimage";startButton.disabled=!hasImage||running||paused;pauseButton.hidden=!running;resumeButton.hidden=!paused;restartButton.disabled=!hasImage;stopButton.disabled=!hasImage||phase==="ready"||phase==="empty";durationSelect.disabled=phase==="running-exposure"||phase==="paused-exposure"}
-      function showPsychedelic(){if(!psychedelicPixels)return;displayContext.putImageData(psychedelicPixels,0,0);fixationDot.style.display="block";stageMessage.textContent="Focus on the red dot and try not to move your eyes."}
-      function showGrayscale(){if(!grayscalePixels)return;displayContext.putImageData(grayscalePixels,0,0);fixationDot.style.display="none";stageMessage.textContent="Keep looking at the same spot."}
-      function clearClock(){if(intervalId!==null){clearInterval(intervalId);intervalId=null}}
-      function resetToReady(message="Image ready. Start when you're comfortable."){clearClock();phase="ready";remainingSeconds=selectedDuration();updateTimer();showPsychedelic();phaseLabel.textContent=message;completion.classList.remove("visible");setControls()}
-      function hsvToRgb(h,s,v){const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);let r,g,b;switch(i%6){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;default:r=v;g=p;b=q}return[r*255,g*255,b*255]}
-      function rgbToHsv(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0;if(d){if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h/=6;if(h<0)h++}return[h,max===0?0:d/max,max]}
-      function buildImageStates(){
-        const source=processingContext.getImageData(0,0,imageWidth,imageHeight),originalData=new Uint8ClampedArray(source.data),psychedelicData=new Uint8ClampedArray(source.data.length),grayData=new Uint8ClampedArray(source.data.length);
-        for(let y=0;y<imageHeight;y++)for(let x=0;x<imageWidth;x++){
-          const i=(y*imageWidth+x)*4,r=source.data[i],g=source.data[i+1],b=source.data[i+2],a=source.data[i+3];
-          const lum=(.2126*r+.7152*g+.0722*b)/255,[sourceHue,sourceSat]=rgbToHsv(r,g,b);
-          const wave=Math.sin(x/imageWidth*Math.PI*4+y/imageHeight*Math.PI*3);
-          // Strong, fully saturated opponent hues. Grayscale photos get a hue map
-          // from luminance; colorful photos receive a complementary hue rotation.
-          const hue=sourceSat>.12?(sourceHue+.5+wave*.045+1)%1:(.02+lum*.76+wave*.035+1)%1;
-          const value=.48+.48*Math.pow(lum,.72),[pr,pg,pb]=hsvToRgb(hue,.98,value);
-          psychedelicData[i]=pr;psychedelicData[i+1]=pg;psychedelicData[i+2]=pb;psychedelicData[i+3]=a;
-          const gray=lum*255;grayData[i]=gray;grayData[i+1]=gray;grayData[i+2]=gray;grayData[i+3]=a;
-        }
-        originalPixels=new ImageData(originalData,imageWidth,imageHeight);psychedelicPixels=new ImageData(psychedelicData,imageWidth,imageHeight);grayscalePixels=new ImageData(grayData,imageWidth,imageHeight);
-        displayCanvas.width=imageWidth;displayCanvas.height=imageHeight;canvasFrame.style.display="block";placeholder.style.display="none";showPsychedelic();
+    (() => {
+      "use strict";
+
+      const fileInput = document.getElementById("fileInput");
+      const dropZone = document.getElementById("dropZone");
+      const uploadTitle = document.getElementById("uploadTitle");
+      const uploadHint = document.getElementById("uploadHint");
+      const placeholder = document.getElementById("placeholder");
+      const canvasFrame = document.getElementById("canvasFrame");
+      const displayCanvas = document.getElementById("displayCanvas");
+      const displayContext = displayCanvas.getContext("2d", { alpha: false });
+      const processingCanvas = document.getElementById("processingCanvas");
+      const processingContext = processingCanvas.getContext("2d", { willReadFrequently: true });
+      const fixationDot = document.getElementById("fixationDot");
+      const stageMessage = document.getElementById("stageMessage");
+      const completion = document.getElementById("completion");
+      const timerDisplay = document.getElementById("timer");
+      const phaseLabel = document.getElementById("phaseLabel");
+      const durationSelect = document.getElementById("durationSelect");
+      const startButton = document.getElementById("startButton");
+      const pauseButton = document.getElementById("pauseButton");
+      const resumeButton = document.getElementById("resumeButton");
+      const restartButton = document.getElementById("restartButton");
+      const stopButton = document.getElementById("stopButton");
+      const fullscreenButton = document.getElementById("fullscreenButton");
+
+      const MAX_EDGE = 2400;
+      const AFTERIMAGE_SECONDS = 10;
+
+      let originalPixels = null;
+      let psychedelicPixels = null;
+      let grayscalePixels = null;
+      let imageWidth = 0;
+      let imageHeight = 0;
+      let phase = "empty";
+      let remainingSeconds = 20;
+      let deadline = 0;
+      let intervalId = null;
+      let activeObjectUrl = null;
+      let loadToken = 0;
+
+      const clamp = (value, min = 0, max = 255) => Math.min(max, Math.max(min, value));
+
+      function selectedDuration() {
+        return Number(durationSelect.value);
       }
-      function loadFile(file){if(!file)return;const ok=["image/jpeg","image/png","image/webp"].includes(file.type)||/\.(jpe?g|png|webp)$/i.test(file.name);if(!ok){uploadTitle.textContent="Unsupported image format";uploadHint.textContent="Please choose a JPG, JPEG, PNG, or WEBP image.";return}
-        const thisLoad=++loadToken;clearClock();phase="loading";originalPixels=psychedelicPixels=grayscalePixels=null;completion.classList.remove("visible");fixationDot.style.display="none";stageMessage.textContent="";phaseLabel.textContent="Preparing your image…";timerDisplay.textContent="—";setControls();uploadTitle.textContent="Preparing image…";uploadHint.textContent="Generating a vivid color-opponent image locally.";
-        if(activeObjectUrl)URL.revokeObjectURL(activeObjectUrl);activeObjectUrl=URL.createObjectURL(file);const image=new Image();image.onload=()=>{if(thisLoad!==loadToken)return;try{const scale=Math.min(1,MAX_EDGE/Math.max(image.naturalWidth,image.naturalHeight));imageWidth=Math.max(1,Math.round(image.naturalWidth*scale));imageHeight=Math.max(1,Math.round(image.naturalHeight*scale));processingCanvas.width=imageWidth;processingCanvas.height=imageHeight;processingContext.clearRect(0,0,imageWidth,imageHeight);processingContext.drawImage(image,0,0,imageWidth,imageHeight);buildImageStates();uploadTitle.textContent=file.name;uploadHint.textContent=`${image.naturalWidth} × ${image.naturalHeight} px · Ready for your experiment`;phase="ready";phaseLabel.textContent="Starting automatically…";remainingSeconds=selectedDuration();updateTimer();setControls();window.setTimeout(()=>{if(thisLoad===loadToken&&phase==="ready")startExposure()},250)}catch(error){console.error(error);phase="empty";phaseLabel.textContent="Could not process this image.";uploadTitle.textContent="Image processing failed";uploadHint.textContent="Try a smaller image or another supported file.";setControls()}};image.onerror=()=>{if(thisLoad!==loadToken)return;phase="empty";phaseLabel.textContent="Could not open this image.";uploadTitle.textContent="Could not open image";uploadHint.textContent="Please try another JPG, PNG, or WEBP file.";setControls()};image.src=activeObjectUrl}
-      function startExposure(){if(!originalPixels)return;clearClock();completion.classList.remove("visible");remainingSeconds=selectedDuration();phase="running-exposure";showPsychedelic();phaseLabel.textContent="Focus on the red dot";deadline=Date.now()+remainingSeconds*1000;updateTimer();setControls();intervalId=setInterval(tick,100)}
-      function startAfterimage(){clearClock();showGrayscale();phase="running-afterimage";remainingSeconds=AFTERIMAGE_SECONDS;deadline=Date.now()+AFTERIMAGE_SECONDS*1000;phaseLabel.textContent="Afterimage observation";updateTimer();setControls();intervalId=setInterval(tick,100)}
-      function tick(){remainingSeconds=Math.max(0,(deadline-Date.now())/1000);updateTimer();if(remainingSeconds<=0){if(phase==="running-exposure")startAfterimage();else if(phase==="running-afterimage")finishExperiment()}}
-      function finishExperiment(){clearClock();phase="complete";remainingSeconds=0;updateTimer();phaseLabel.textContent="Experiment complete";fixationDot.style.display="none";stageMessage.textContent="";completion.classList.add("visible");setControls()}
-      function pauseExperiment(){if(phase!=="running-exposure"&&phase!=="running-afterimage")return;remainingSeconds=Math.max(0,(deadline-Date.now())/1000);clearClock();phase=phase==="running-exposure"?"paused-exposure":"paused-afterimage";phaseLabel.textContent=phase==="paused-exposure"?"Exposure paused":"Observation paused";updateTimer();setControls()}
-      function resumeExperiment(){if(phase!=="paused-exposure"&&phase!=="paused-afterimage")return;const exposure=phase==="paused-exposure";phase=exposure?"running-exposure":"running-afterimage";deadline=Date.now()+remainingSeconds*1000;phaseLabel.textContent=exposure?"Focus on the red dot":"Afterimage observation";setControls();intervalId=setInterval(tick,100)}
-      function stopExperiment(){if(!originalPixels)return;clearClock();completion.classList.remove("visible");resetToReady("Stopped. Start when you're ready.")}
-      function requestUpload(){fileInput.click()}fileInput.addEventListener("change",e=>{loadFile(e.target.files&&e.target.files[0]);fileInput.value=""});dropZone.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();requestUpload()}});["dragenter","dragover"].forEach(type=>dropZone.addEventListener(type,e=>{e.preventDefault();dropZone.classList.add("dragging")}));["dragleave","drop"].forEach(type=>dropZone.addEventListener(type,e=>{e.preventDefault();dropZone.classList.remove("dragging")}));dropZone.addEventListener("drop",e=>{const file=e.dataTransfer&&e.dataTransfer.files[0];if(file)loadFile(file)});
-      startButton.addEventListener("click",startExposure);pauseButton.addEventListener("click",pauseExperiment);resumeButton.addEventListener("click",resumeExperiment);restartButton.addEventListener("click",startExposure);stopButton.addEventListener("click",stopExperiment);$("tryAgainButton").addEventListener("click",startExposure);$("uploadNewButton").addEventListener("click",requestUpload);durationSelect.addEventListener("change",()=>{if(phase==="ready"||phase==="empty"){remainingSeconds=selectedDuration();updateTimer()}});fullscreenButton.addEventListener("click",async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(error){phaseLabel.textContent="Fullscreen is unavailable in this browser."}});document.addEventListener("fullscreenchange",()=>fullscreenButton.textContent=document.fullscreenElement?"Exit Fullscreen":"Fullscreen");setControls();updateTimer();
+
+      function formatTime(seconds) {
+        const safe = Math.max(0, Math.ceil(seconds));
+        return `00:${String(safe).padStart(2, "0")}`;
+      }
+
+      function updateTimer() {
+        timerDisplay.textContent = formatTime(remainingSeconds);
+      }
+
+      function setControls() {
+        const hasImage = !!originalPixels;
+        const running = phase === "running-exposure" || phase === "running-afterimage";
+        const paused = phase === "paused-exposure" || phase === "paused-afterimage";
+
+        startButton.disabled = !hasImage || running || paused;
+        pauseButton.hidden = !running;
+        resumeButton.hidden = !paused;
+        restartButton.disabled = !hasImage;
+        stopButton.disabled = !hasImage || phase === "ready" || phase === "empty";
+        durationSelect.disabled = phase === "running-exposure" || phase === "paused-exposure";
+      }
+
+      function showPsychedelic() {
+        if (!psychedelicPixels) return;
+        displayContext.putImageData(psychedelicPixels, 0, 0);
+        fixationDot.style.display = "block";
+        stageMessage.textContent = "Focus on the red dot and try not to move your eyes.";
+      }
+
+      function showGrayscale() {
+        if (!grayscalePixels) return;
+        displayContext.putImageData(grayscalePixels, 0, 0);
+        fixationDot.style.display = "none";
+        stageMessage.textContent = "Keep looking at the same spot.";
+      }
+
+      function clearClock() {
+        if (intervalId !== null) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+
+      function resetToReady(message = "Image ready. Start when you're comfortable.") {
+        clearClock();
+        phase = "ready";
+        remainingSeconds = selectedDuration();
+        updateTimer();
+        showPsychedelic();
+        phaseLabel.textContent = message;
+        completion.classList.remove("visible");
+        setControls();
+      }
+
+      function hsvToRgb(h, s, v) {
+        const i = Math.floor(h * 6);
+        const f = h * 6 - i;
+        const p = v * (1 - s);
+        const q = v * (1 - f * s);
+        const t = v * (1 - (1 - f) * s);
+
+        let r, g, b;
+
+        switch (i % 6) {
+          case 0: r = v; g = t; b = p; break;
+          case 1: r = q; g = v; b = p; break;
+          case 2: r = p; g = v; b = t; break;
+          case 3: r = p; g = q; b = v; break;
+          case 4: r = t; g = p; b = v; break;
+          default: r = v; g = p; b = q; break;
+        }
+
+        return [r * 255, g * 255, b * 255];
+      }
+
+      function rgbToHsv(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+
+        let h = 0;
+        if (delta !== 0) {
+          if (max === r) h = ((g - b) / delta) % 6;
+          else if (max === g) h = ((b - r) / delta) + 2;
+          else h = ((r - g) / delta) + 4;
+          h /= 6;
+          if (h < 0) h += 1;
+        }
+
+        const s = max === 0 ? 0 : delta / max;
+        return [h, s, max];
+      }
+
+      function buildImageStates() {
+        const source = processingContext.getImageData(0, 0, imageWidth, imageHeight);
+        const psychedelicData = new Uint8ClampedArray(source.data.length);
+        const grayData = new Uint8ClampedArray(source.data.length);
+
+        for (let y = 0; y < imageHeight; y++) {
+          for (let x = 0; x < imageWidth; x++) {
+            const i = (y * imageWidth + x) * 4;
+            const r = source.data[i];
+            const g = source.data[i + 1];
+            const b = source.data[i + 2];
+            const a = source.data[i + 3];
+
+            const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+            let [h, s, v] = rgbToHsv(r, g, b);
+
+            const wave = Math.sin((x / Math.max(1, imageWidth)) * Math.PI * 5 + (y / Math.max(1, imageHeight)) * Math.PI * 3);
+            const hue = (h + 0.5 + wave * 0.18 + (1 - lum) * 0.14 + 1) % 1;
+            const sat = Math.min(1, s * 2.7 + 0.25);
+            const val = Math.min(1, v * 1.7 + 0.15);
+
+            let [pr, pg, pb] = hsvToRgb(hue, sat, val);
+
+            psychedelicData[i] = clamp(pr);
+            psychedelicData[i + 1] = clamp(pg);
+            psychedelicData[i + 2] = clamp(pb);
+            psychedelicData[i + 3] = a;
+
+            const grayVal = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            grayData[i] = grayVal;
+            grayData[i + 1] = grayVal;
+            grayData[i + 2] = grayVal;
+            grayData[i + 3] = a;
+          }
+        }
+
+        originalPixels = new ImageData(new Uint8ClampedArray(source.data), imageWidth, imageHeight);
+        psychedelicPixels = new ImageData(psychedelicData, imageWidth, imageHeight);
+        grayscalePixels = new ImageData(grayData, imageWidth, imageHeight);
+
+        displayCanvas.width = imageWidth;
+        displayCanvas.height = imageHeight;
+        canvasFrame.style.display = "block";
+        placeholder.style.display = "none";
+
+        showPsychedelic();
+      }
+
+      function loadFile(file) {
+        if (!file) return;
+
+        const validMime = ["image/jpeg", "image/png", "image/webp"];
+        const validName = /\.(jpe?g|png|webp)$/i.test(file.name);
+        if (!validMime.includes(file.type) && !validName) {
+          uploadTitle.textContent = "Unsupported image format";
+          uploadHint.textContent = "Please choose a JPG, JPEG, PNG, or WEBP image.";
+          return;
+        }
+
+        const thisLoad = ++loadToken;
+
+        clearClock();
+        phase = "loading";
+        originalPixels = psychedelicPixels = grayscalePixels = null;
+        completion.classList.remove("visible");
+        fixationDot.style.display = "none";
+        stageMessage.textContent = "";
+        phaseLabel.textContent = "Preparing your image…";
+        timerDisplay.textContent = "—";
+        setControls();
+
+        uploadTitle.textContent = "Preparing image…";
+        uploadHint.textContent = "Generating a vivid color-opponent image locally.";
+
+        if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
+        activeObjectUrl = URL.createObjectURL(file);
+
+        const image = new Image();
+        image.onload = () => {
+          if (thisLoad !== loadToken) return;
+
+          try {
+            const scale = Math.min(1, MAX_EDGE / Math.max(image.naturalWidth, image.naturalHeight));
+            imageWidth = Math.max(1, Math.round(image.naturalWidth * scale));
+            imageHeight = Math.max(1, Math.round(image.naturalHeight * scale));
+
+            processingCanvas.width = imageWidth;
+            processingCanvas.height = imageHeight;
+
+            processingContext.clearRect(0, 0, imageWidth, imageHeight);
+            processingContext.drawImage(image, 0, 0, imageWidth, imageHeight);
+
+            buildImageStates();
+
+            uploadTitle.textContent = file.name;
+            uploadHint.textContent = `${image.naturalWidth} × ${image.naturalHeight} px · Ready for your experiment`;
+
+            phase = "ready";
+            phaseLabel.textContent = "Starting automatically…";
+            remainingSeconds = selectedDuration();
+            updateTimer();
+            setControls();
+
+            window.setTimeout(() => {
+              if (thisLoad === loadToken && phase === "ready") {
+                startExposure();
+              }
+            }, 250);
+
+          } catch (error) {
+            console.error(error);
+            phase = "empty";
+            phaseLabel.textContent = "Could not process this image.";
+            uploadTitle.textContent = "Image processing failed";
+            uploadHint.textContent = "Try a smaller image or a different supported file.";
+            setControls();
+          }
+        };
+
+        image.onerror = () => {
+          if (thisLoad !== loadToken) return;
+
+          phase = "empty";
+          phaseLabel.textContent = "Could not open this image.";
+          uploadTitle.textContent = "Could not open image";
+          uploadHint.textContent = "Please try another JPG, PNG, or WEBP file.";
+          setControls();
+        };
+
+        image.src = activeObjectUrl;
+      }
+
+      function startExposure() {
+        if (!originalPixels) return;
+
+        clearClock();
+        completion.classList.remove("visible");
+        remainingSeconds = selectedDuration();
+        phase = "running-exposure";
+        showPsychedelic();
+        phaseLabel.textContent = "Focus on the red dot";
+        deadline = Date.now() + remainingSeconds * 1000;
+        updateTimer();
+        setControls();
+        intervalId = window.setInterval(tick, 100);
+      }
+
+      function startAfterimage() {
+        clearClock();
+        showGrayscale();
+        phase = "running-afterimage";
+        remainingSeconds = AFTERIMAGE_SECONDS;
+        deadline = Date.now() + AFTERIMAGE_SECONDS * 1000;
+        phaseLabel.textContent = "Afterimage observation";
+        updateTimer();
+        setControls();
+        intervalId = window.setInterval(tick, 100);
+      }
+
+      function tick() {
+        remainingSeconds = Math.max(0, (deadline - Date.now()) / 1000);
+        updateTimer();
+
+        if (remainingSeconds <= 0) {
+          if (phase === "running-exposure") {
+            startAfterimage();
+          } else if (phase === "running-afterimage") {
+            finishExperiment();
+          }
+        }
+      }
+
+      function finishExperiment() {
+        clearClock();
+        phase = "complete";
+        remainingSeconds = 0;
+        updateTimer();
+        phaseLabel.textContent = "Experiment complete";
+        fixationDot.style.display = "none";
+        stageMessage.textContent = "";
+        completion.classList.add("visible");
+        setControls();
+      }
+
+      function pauseExperiment() {
+        if (phase !== "running-exposure" && phase !== "running-afterimage") return;
+
+        remainingSeconds = Math.max(0, (deadline - Date.now()) / 1000);
+        clearClock();
+
+        phase = phase === "running-exposure" ? "paused-exposure" : "paused-afterimage";
+        phaseLabel.textContent = phase === "paused-exposure" ? "Exposure paused" : "Observation paused";
+        updateTimer();
+        setControls();
+      }
+
+      function resumeExperiment() {
+        if (phase !== "paused-exposure" && phase !== "paused-afterimage") return;
+
+        const wasExposure = phase === "paused-exposure";
+        phase = wasExposure ? "running-exposure" : "running-afterimage";
+
+        deadline = Date.now() + remainingSeconds * 1000;
+        phaseLabel.textContent = wasExposure ? "Focus on the red dot" : "Afterimage observation";
+        setControls();
+
+        intervalId = window.setInterval(tick, 100);
+      }
+
+      function stopExperiment() {
+        if (!originalPixels) return;
+        clearClock();
+        completion.classList.remove("visible");
+        resetToReady("Stopped. Start when you're ready.");
+      }
+
+      function requestUpload() {
+        fileInput.click();
+      }
+
+      fileInput.addEventListener("change", (event) => {
+        loadFile(event.target.files && event.target.files[0]);
+        fileInput.value = "";
+      });
+
+      dropZone.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          requestUpload();
+        }
+      });
+
+      ["dragenter", "dragover"].forEach((type) => {
+        dropZone.addEventListener(type, (event) => {
+          event.preventDefault();
+          dropZone.classList.add("dragging");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((type) => {
+        dropZone.addEventListener(type, (event) => {
+          event.preventDefault();
+          dropZone.classList.remove("dragging");
+        });
+      });
+
+      dropZone.addEventListener("drop", (event) => {
+        const file = event.dataTransfer && event.dataTransfer.files[0];
+        if (file) loadFile(file);
+      });
+
+      startButton.addEventListener("click", startExposure);
+      pauseButton.addEventListener("click", pauseExperiment);
+      resumeButton.addEventListener("click", resumeExperiment);
+      restartButton.addEventListener("click", startExposure);
+      stopButton.addEventListener("click", stopExperiment);
+
+      document.getElementById("tryAgainButton").addEventListener("click", startExposure);
+      document.getElementById("uploadNewButton").addEventListener("click", requestUpload);
+
+      durationSelect.addEventListener("change", () => {
+        if (phase === "ready" || phase === "empty") {
+          remainingSeconds = selectedDuration();
+          updateTimer();
+        }
+      });
+
+      document.getElementById("fullscreenButton").addEventListener("click", async () => {
+        try {
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+          } else {
+            await document.exitFullscreen();
+          }
+        } catch (error) {
+          phaseLabel.textContent = "Fullscreen is unavailable in this browser.";
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        const button = document.getElementById("fullscreenButton");
+        button.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
+      });
+
+      setControls();
+      updateTimer();
     })();
   </script>
 </body>
